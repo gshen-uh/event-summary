@@ -23,4 +23,4 @@ jobs:
           pip install voila
       - name: Deploy to Voilà
         run: |
-          voila --no-browser --port ${{ github.event.deployment.environment }} <notebook-name>.ipynb
+          voila --no-browser --port ${{ github.event.deployment.environment }} 0517 Event Summary Plot Generator.ipynb
