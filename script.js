@@ -1,20 +1,25 @@
+// Event listeners for buttons
 document.getElementById('generateEvents').addEventListener('click', generateEvents);
 document.getElementById('generatePlot').addEventListener('click', generatePlot);
 
+// Function to generate events
 function generateEvents() {
+    console.log('Generate Events button clicked');
     const inputText = document.getElementById('activities').value.trim();
     const eventsBox = document.getElementById('events');
     const extractedEvents = extractEvents(inputText);
 
     const data = extractedEvents.map(event => {
         const date = new Date(event[0]);
-        return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} ${event[1]}`;
+        return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ${event[1]}`;
     }).join('\n');
 
     eventsBox.value = data;
 }
 
+// Function to generate the plot
 function generatePlot() {
+    console.log('Generate Plot button clicked');
     const eventsBox = document.getElementById('events');
     const events = eventsBox.value.trim().split('\n');
     const eventList = events.map(event => {
@@ -33,6 +38,7 @@ function generatePlot() {
     generateEventPlot(eventList.reverse());
 }
 
+// Function to extract events from input text
 function extractEvents(inputText) {
     console.log('Extracting events from input text');
     const lines = inputText.split('\n').map(line => line.trim());
@@ -59,7 +65,7 @@ function extractEvents(inputText) {
             const eventTime = `${currentDate} ${currentTime}`;
             const reasonTitleLine = lines.slice(lines.indexOf(line) + 1).find(l => l.toLowerCase().includes('title:'));
             const reasonTitle = reasonTitleLine ? reasonTitleLine.split('Title:')[1].trim() : '';
-            events.push([eventTime, `Project Rework: ${reasonTitle}`]);
+            events.push([eventTime, `Project Rework${reasonTitle ? ': ' + reasonTitle : ''}`]);
         } else if (line.toLowerCase().includes('changed the status to')) {
             const eventTime = `${currentDate} ${currentTime}`;
             const status = line.split('changed the status to').pop().trim();
@@ -71,7 +77,7 @@ function extractEvents(inputText) {
     return events;
 }
 
-
+// Function to generate event table HTML
 function generateEventTable(events) {
     const tableHeader = `
         <table style='width:100%; border:1px solid black; border-collapse:collapse;'>
@@ -94,6 +100,7 @@ function generateEventTable(events) {
     return tableHeader + tableRows + '</table>';
 }
 
+// Function to generate event plot using D3.js
 function generateEventPlot(events) {
     const outputPlot = document.getElementById('outputPlot');
     outputPlot.innerHTML = '';
