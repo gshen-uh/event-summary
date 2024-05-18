@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Timeline</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <label for="projectId">Project ID:</label>
+        <input type="text" id="projectId" placeholder="Enter project ID">
+
+        <label for="activities">Activities:</label>
+        <textarea id="activities" placeholder="Paste your text here"></textarea>
+
+        <button id="generateEvents">Generate Events</button>
+
+        <label for="events">Events:</label>
+        <textarea id="events" placeholder="Review and edit events here"></textarea>
+
+        <button id="generatePlot">Generate Plot</button>
+
+        <div id="outputTable"></div>
+        <div id="outputPlot"></div>
+    </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
