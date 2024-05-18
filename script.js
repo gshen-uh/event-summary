@@ -34,6 +34,7 @@ function generatePlot() {
 }
 
 function extractEvents(inputText) {
+    console.log('Extracting events from input text');
     const lines = inputText.split('\n').map(line => line.trim());
     const events = [];
     let currentDate = null;
@@ -56,7 +57,8 @@ function extractEvents(inputText) {
             events.push([eventTime, `Assigned to Pilot (${pilotName})`]);
         } else if (line.toLowerCase().includes('changed the status to project rework')) {
             const eventTime = `${currentDate} ${currentTime}`;
-            const reasonTitle = lines.slice(lines.indexOf(line) + 1).find(l => l.toLowerCase().includes('title:')).split('Title:')[1].trim();
+            const reasonTitleLine = lines.slice(lines.indexOf(line) + 1).find(l => l.toLowerCase().includes('title:'));
+            const reasonTitle = reasonTitleLine ? reasonTitleLine.split('Title:')[1].trim() : '';
             events.push([eventTime, `Project Rework: ${reasonTitle}`]);
         } else if (line.toLowerCase().includes('changed the status to')) {
             const eventTime = `${currentDate} ${currentTime}`;
@@ -65,8 +67,10 @@ function extractEvents(inputText) {
         }
     });
 
+    console.log('Extracted events:', events);
     return events;
 }
+
 
 function generateEventTable(events) {
     const tableHeader = `
