@@ -118,20 +118,60 @@ function extractEvents(inputText) {
     const datePattern = /\d{2}\/\d{2}\/\d{4}/;
     const timePattern = /\d{1,2}:\d{2} (?:AM|PM)/;
 
-    lines.forEach(line => {
-        line = line.trim();
+    for (let index = 0; index < lines.length; index++) {
+        let line = lines[index].trim();
 
         if (datePattern.test(line)) {
             currentDate = line;
-        } else if (timePattern.test(line)) {
+            continue;
+        }
+
+        if (timePattern.test(line)) {
             currentTime = line;
-        } else {
-            if (currentDate && currentTime) {
-                const dateTimeStr = `${currentDate} ${currentTime}`;
-                events.push([dateTimeStr, line]);
+            continue;
+        }
+
+        if (currentDate && currentTime) {
+            const dateTimeStr = `${currentDate} ${currentTime}`;
+            
+            if (line.toLowerCase().includes('created project')) {
+                events.push([dateTimeStr, 'Project created']);
+            } else if (line.toLowerCase().includes('changed the status to')) {
+                const status = line.split('changed the status to')[1].trim();
+                events.push([dateTimeStr, status]);
+            } else if (line.toLowerCase().includes('assigned pilot to')) {
+                let pilotName = extractPilotName(lines, index);
+                events.push([dateTimeStr, `Assigned to Pilot${pilotName ? ` (${pilotName})` : ''}`]);
+            } else if (line.toLowerCase().includes('changed the status to project rework')) {
+                let reason = extractReworkReason(lines, index);
+                events.push([dateTimeStr, `Project Rework${reason ? `: ${reason}` : ''}`]);
             }
         }
-    });
+    }
 
     return events;
+}
+
+function extractPilotName(lines, currentIndex) {
+    for (let i = currentIndex + 1; i < lines.length; i++) {
+        if (lines[i].toLowerCase().includes('assigned pilot to')) {
+            for (let j = i + 1; j < lines.length; j++) {
+                if (lines[j].trim()) {
+                    return lines[j].trim();
+                }
+            }
+        }
+    }
+    return null;
+}
+
+function extractReworkReason(lines, currentIndex) {
+    for (let i = currentIndex + 1; i < lines.length; i++) {
+        if (lines[i].toLowerCase().includes('title:')) {
+            return lines[i].split('Title:')[1].trim();
+        } else if (/\d{1,2}:\d{2} (?:AM|PM)|\d{2}\/\d{2}\/\d{4}/.test(lines[i])) {
+            break;
+        }
+    }
+    return null;
 }
