@@ -17,7 +17,7 @@ function generateEvents() {
     let uniqueEvents = Object.entries(eventsDict).map(([dt, desc]) => [new Date(dt), desc]);
     uniqueEvents.sort((a, b) => a[0] - b[0]);
 
-    let data = uniqueEvents.map(event => `${event[0].toLocaleString()} ${event[1]}`).join('\n');
+    let data = uniqueEvents.map(event => `${event[0].toLocaleString('en-GB', { hour12: false })} ${event[1]}`).join('\n');
     document.getElementById('events').value = data;
 }
 
@@ -46,7 +46,7 @@ function generateTable(eventList) {
     eventList.reverse().forEach(event => {
         let color = event[1].includes('Project Rework') ? 'red' : 'black';
         table += `<tr>
-            <td>${event[0].toLocaleString()}</td>
+            <td>${event[0].toLocaleString('en-GB', { hour12: false })}</td>
             <td style="color: ${color};">${event[1]}</td>
         </tr>`;
     });
@@ -71,7 +71,7 @@ function generateTimeline(eventList) {
     const y = d3.scaleLinear().range([height, 0]);
 
     x.domain(d3.extent(eventList, d => d[0]));
-    y.domain([0, eventList.length]);
+    y.domain([0, eventList.length - 1]);
 
     const line = d3.line()
         .x(d => x(d[0]))
@@ -133,7 +133,7 @@ function extractEvents(inputText) {
 
         if (currentDate && currentTime) {
             const dateTimeStr = `${currentDate} ${currentTime}`;
-            
+
             if (line.toLowerCase().includes('created project')) {
                 events.push([dateTimeStr, 'Project created']);
             } else if (line.toLowerCase().includes('changed the status to')) {
