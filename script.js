@@ -17,7 +17,7 @@ function generateEvents() {
     let uniqueEvents = Object.entries(eventsDict).map(([dt, desc]) => [new Date(dt), desc]);
     uniqueEvents.sort((a, b) => a[0] - b[0]);
 
-    let data = uniqueEvents.map(event => `${event[0].toLocaleString('en-GB', { hour12: false })} ${event[1]}`).join('\n');
+    let data = uniqueEvents.map(event => `${formatDate(event[0])} ${event[1]}`).join('\n');
     document.getElementById('events').value = data;
 }
 
@@ -46,7 +46,7 @@ function generateTable(eventList) {
     eventList.reverse().forEach(event => {
         let color = event[1].includes('Project Rework') ? 'red' : 'black';
         table += `<tr>
-            <td>${event[0].toLocaleString('en-GB', { hour12: false })}</td>
+            <td>${formatDate(event[0])}</td>
             <td style="color: ${color};">${event[1]}</td>
         </tr>`;
     });
@@ -132,8 +132,8 @@ function extractEvents(inputText) {
         }
 
         if (currentDate && currentTime) {
-            const dateTimeStr = `${currentDate} ${currentTime}`;
-
+            const dateTimeStr = new Date(`${currentDate} ${currentTime}`);
+            
             if (line.toLowerCase().includes('created project')) {
                 events.push([dateTimeStr, 'Project created']);
             } else if (line.toLowerCase().includes('changed the status to')) {
@@ -174,4 +174,8 @@ function extractReworkReason(lines, currentIndex) {
         }
     }
     return null;
+}
+
+function formatDate(date) {
+    return date.toLocaleString('en-GB', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(',', '');
 }
